@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
           if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const PassportScreen()),
+              MaterialPageRoute(builder: (context) => PassportScreen()),
             );
           } else if (index == 1) {
             Navigator.push(
