@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/screen_passport.dart';
+//import 'screens/screen_passport.dart';
+import 'screens/screen_map.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const PassportScreen(),
+      home: MapScreen(),
     );
   }
 }
