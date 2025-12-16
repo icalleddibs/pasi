@@ -7,6 +7,7 @@ import 'package:countries_world_map/countries_world_map.dart';
 import 'package:countries_world_map/data/maps/world_map.dart';
 import 'package:flutter/material.dart';
 import 'package:pasi/data/country_data.dart';
+import 'package:pasi/designs/postcard_border.dart';
 
 class SupportedCountriesMap extends StatefulWidget {
   const SupportedCountriesMap({Key? key}) : super(key: key);
@@ -17,13 +18,13 @@ class SupportedCountriesMap extends StatefulWidget {
 
 final Random _random = Random();
 final List<Color> randomColors = [
-  Colors.green.shade900,
-  Colors.green.shade800,
+  const Color.fromARGB(255, 21, 86, 25),
+  const Color.fromARGB(255, 34, 105, 38),
   Colors.green.shade700,
   Colors.green.shade600,
-  Colors.green.shade500,
   Colors.green.shade400,
   Colors.green.shade300,
+  const Color.fromARGB(255, 155, 214, 158),
 ];
 
 class _SupportedCountriesMapState extends State<SupportedCountriesMap> {
@@ -100,134 +101,388 @@ class _CountryPageState extends State<CountryPage> {
 
   late Map<String, Color?> keyValuesPaires;
 
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  instruction = getInstructions(widget.country);
+    instruction = getInstructions(widget.country);
 
-  if (instruction != "NOT SUPPORTED") {
-    properties = getProperties(instruction, widget.country);
-    properties.sort((a, b) => a['name'].compareTo(b['name']));
+    if (instruction != "NOT SUPPORTED") {
+      properties = getProperties(instruction, widget.country);
+      properties.sort((a, b) => a['name'].compareTo(b['name']));
 
-    // Initialize colors based on 'checkedState'
-    keyValuesPaires = {};
-    for (var element in properties) {
-      keyValuesPaires[element['id']] = element['color'];
+      // Initialize colors based on 'checkedState'
+      keyValuesPaires = {};
+      for (var element in properties) {
+        keyValuesPaires[element['id']] = element['color'];
+      }
+
+    // MOVE THIS STATISTIC SOMEWHERE ELSE
+      state = '${properties.where((prop) => prop['color'] != null).length} / ${properties.length} visited';
+    } else {
+      state = 'This country is not supported';
     }
-
-  // MOVE THIS STATISTIC SOMEWHERE ELSE
-    state = '${properties.where((prop) => prop['color'] != null).length} / ${properties.length} visited';
-  } else {
-    state = 'This country is not supported';
   }
-}
 
   @override
-Widget build(BuildContext context) {
-  // Widget for the list of properties
-  Widget propertyList() {
-    return ListView(
-      children: [
-        for (int i = 0; i < properties.length; i++)
-          ListTile(
-            // name of the state
-            title: Text(properties[i]['name']),
-            // these are the checkboxes
-            leading: Container(
-              margin: EdgeInsets.only(top: 8),
-              width: 20,
-              height: 20,
-              color: properties[i]['color'] ?? Colors.grey.shade300,
-            ),
-            // additional ID if it exists
-            subtitle: Text(properties[i]['id']),
-          ),
-      ],
-    );
-  }
-
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.grey.shade50,
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.blue),
-      title: Text(
-        widget.country.toUpperCase() + ' - ' + state,
-        // change it to the full country name
-        style: TextStyle(color: Colors.blue),
-      ),
-    ),
-    body: instruction == "NOT SUPPORTED"
-        ? Center(child: Text("This country is not supported! Will just display a bare page with no states/provinces added. Need to get a close up version of the map."))
-        : Column(
-            children: [
-              // Map + optional side panel for wide screens
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: SimpleMap(
-                          defaultColor: Colors.grey.shade300,
-                          key: Key(properties.toString()),
-                          colors: keyValuesPaires,
-                          instructions: instruction,
-                        ),
-                      ),
-                    ),
-                    if (MediaQuery.of(context).size.width > 800)
-                      SizedBox(
-                        width: 320,
-                        height: MediaQuery.of(context).size.height,
-                        child: Card(
-                          margin: EdgeInsets.all(16),
-                          elevation: 8,
-                          child: propertyList(),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              // Bottom panel for narrow screens
-              if (MediaQuery.of(context).size.width <= 800)
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  child: Card(
-                    margin: EdgeInsets.all(16),
-                    elevation: 8,
-                    child: propertyList(),
+  Widget build(BuildContext context) {
+    // Widget for the list of properties
+    Widget propertyList() {
+  return ListView.builder(
+    padding: EdgeInsets.zero,
+    itemCount: properties.length + 1,
+    itemBuilder: (context, i) {
+      // home tab for each list, separate from list built by properties (provinces)
+      if (i == 0) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: ClipPath(
+          clipper: RibbonClipper(),
+          child: Container(
+            color: const Color.fromARGB(255, 236, 178, 92),
+            height: 35, // height of each ribbon
+            child: Padding(
+              // pushes content away from the left ribbon notch
+              padding: const EdgeInsets.only(left: 22, right: 2),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Overview",
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-            ],
+              ),
+            ),
           ),
+        ),
+      );
+    }
+
+      final int j = i - 1; // remaining index for properties list
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4), // space between ribbons
+        child: ClipPath(
+          clipper: RibbonClipper(), // these are the ribbons that each of the tiles is gonna go in
+          child: Container(
+            color: properties[j]['color'] ?? const Color.fromARGB(255, 199, 199, 199),
+            height: 35, // height of each ribbon
+            child: Padding(
+              // pushes content away from the left ribbon notch
+              padding: const EdgeInsets.only(left: 24, right: 6),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  properties[j]['id'],
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+      );
+    },
   );
 }
 
-  List<Map<String, dynamic>> getProperties(String input, String countryId) {
-  Map<String, dynamic> instructions = json.decode(input);
-  List paths = instructions['i'];
 
-  // Pull checked states from your external data source
-  List visitedStates = countryData[widget.country]?['visitedStates'] ?? [];
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 190, 190, 190),
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.blue.shade800),
+        title: Text(
+          // ignore: prefer_interpolation_to_compose_strings
+          (countryData[widget.country]?['name'] ?? 'Unknown Country'),
+          style: TextStyle(color: Colors.blue.shade800),
+        ),
+      ),
+      body: instruction == "NOT SUPPORTED"
+          ? Center(child: Text("This country is not supported! Will just display a bare page with no states/provinces added. Need to get a close up version of the map."))
+          : Column(
+              children: [
+                // Map + optional side panel for wide screens
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 75, bottom: 75, left: 60, right: 50),
+                            child: FractionallySizedBox(
+                              widthFactor: 1.0,
+                              heightFactor: 0.8,
+                            child: PostcardContainer(
+                              strokeWidth: 36,
+                              borderRadius: 16,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment(-0.1, -0.2),
+                                tileMode: TileMode.repeated,
+                                stops: [
+                                        0.00, 0.05, 0.05, 0.10, 0.10, 0.15, 0.15, 0.20,
+                                        0.20, 0.25, 0.25, 0.30, 0.30, 0.35, 0.35, 0.40,
+                                        0.40, 0.45, 0.45, 0.50, 0.50, 0.55, 0.55, 0.60,
+                                        0.60, 0.65, 0.65, 0.70, 0.70, 0.75, 0.75, 0.80,
+                                        0.80, 0.85, 0.85, 0.90, 0.90, 0.95, 0.95, 1.00,
+                                      ],
+                                colors: [
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  const Color.fromARGB(255, 255, 23, 23),
+                                  Colors.white,
+                                  Colors.white,
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  const Color.fromARGB(255, 19, 66, 147),
+                                  Colors.white,
+                                  Colors.white,
+                                ],
+                              ),
+                              child: Container(
+                                color: Colors.white,
+                                width: 700,   // fixed postcard size
+                                height: 400,
+                                padding: EdgeInsets.all(24),
 
-  List<Map<String, dynamic>> properties = [];
+                                child: Row(
+                                  children: [
 
-  for (var element in paths) {
-    String stateName = element['n'];
-    bool isVisited = visitedStates.contains(stateName);
-    Color? assignedColor =
-        isVisited ? randomColors[_random.nextInt(randomColors.length)] : null;
-    properties.add({
-      'name': stateName,
-      'id': element['u'],
-      'visitedState': visitedStates.contains(stateName), // true if visited
-      'color': assignedColor,
-    });
+                                    /// LEFT COLUMN — MAP
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        color: Colors.white,
+                                        child: SimpleMap(
+                                          defaultColor: Colors.grey.shade300,
+                                          key: Key(properties.toString()),
+                                          colors: keyValuesPaires,
+                                          instructions: instruction,
+                                        ),
+                                      ),
+                                    ),
+
+                                    /// SEPARATOR LINE
+                                    Container(
+                                      width: 2,
+                                      margin: EdgeInsets.symmetric(horizontal: 24),
+                                      color: Colors.black12, // thin grey line
+                                    ),
+
+                                    /// RIGHT COLUMN — TEXT
+                                    Expanded(
+                                      flex: 1, 
+                                      child: Container(
+                                        color: Colors.white,
+                                        padding: const EdgeInsets.all(8),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            // stamp image at the top (to be resized), make sure to name properly by country code
+                                            Image.asset(
+                                              "assets/stamps/stamp_${widget.country}.png",
+                                              height: 120,
+                                              fit: BoxFit.contain,
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              "${countryData[widget.country]?['name'] ?? 'Unknown Country'}",
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                height: 1.4,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                              height: 20,      // vertical space around it
+                                              color: Colors.black12,
+                                            ),
+                                            Text(
+                                              state,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                height: 1.4,
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                              height: 20,      // vertical space around it
+                                              color: Colors.black12,
+                                            ),
+                                            Text(
+                                              "More details TBA...",
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                height: 1.4,
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                              height: 20,      // vertical space around it
+                                              color: Colors.black12,
+                                            ),
+                                            Text(
+                                              "...",
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                height: 1.4,
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                              height: 20,      // vertical space around it
+                                              color: Colors.black12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (MediaQuery.of(context).size.width > 800)
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16, top: 50, bottom: 50, right: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // LEFT: ribbon list (NO background)
+                                SizedBox(
+                                  width: 80,
+                                  child: propertyList(),
+                                ),
+
+                                // RIGHT: content card (rounded box)
+                                Expanded(
+                                  child: Card(
+                                    elevation: 8,
+                                    color: Colors.brown.shade100,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(16), bottomRight: Radius.circular(16)),
+                                      side: const BorderSide(color: Colors.brown, width: 5),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Text(
+                                        'Right-side content goes here',
+                                        style: Theme.of(context).textTheme.bodyLarge,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Bottom panel for narrow screens. Needs to be redesigned afterwards.
+                  if (MediaQuery.of(context).size.width <= 800)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: Card(
+                        margin: const EdgeInsets.all(16),
+                        elevation: 8,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // LEFT: ribbon list (constrained width)
+                            SizedBox(
+                              width: 80,
+                              child: propertyList(),
+                            ),
+
+                            // RIGHT: future content
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Text(
+                                  'Right-side content goes here',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+    List<Map<String, dynamic>> getProperties(String input, String countryId) {
+    Map<String, dynamic> instructions = json.decode(input);
+    List paths = instructions['i'];
+
+    // Pull checked states from your external data source
+    List visitedStates = countryData[widget.country]?['visitedStates'] ?? [];
+
+    List<Map<String, dynamic>> properties = [];
+
+    for (var element in paths) {
+      String stateName = element['n'];
+      bool isVisited = visitedStates.contains(stateName);
+      Color? assignedColor =
+          isVisited ? randomColors[_random.nextInt(randomColors.length)] : null;
+      properties.add({
+        'name': stateName,
+        'id': element['u'],
+        'visitedState': visitedStates.contains(stateName), // true if visited
+        'color': assignedColor,
+      });
+    }
+
+    return properties;
   }
-
-  return properties;
-}
 
   // listing out all the countries and setting them to return instructions
   String getInstructions(String id) {
@@ -642,3 +897,8 @@ Widget build(BuildContext context) {
     }
   }
 }
+
+
+
+
+
