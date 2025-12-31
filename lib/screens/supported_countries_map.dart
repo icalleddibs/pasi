@@ -9,6 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:pasi/data/country_data.dart';
 import 'package:pasi/designs/postcard_border.dart';
 
+// right side content: want to make this change based on which ribbon is clicked on
+// also will need to retrieve the info from the json
+// is there a way I can do markdown?
+
 class SupportedCountriesMap extends StatefulWidget {
   const SupportedCountriesMap({Key? key}) : super(key: key);
 

@@ -27,7 +27,7 @@ final Map<String, dynamic> countryData = {
     'name': 'Mexico',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Yucatán', 'México', 'Quintana Roo'],
   },
   // CARIBBEAN ---------------------------------------------------------------------------------------------------------------------------------
   // dominica 
@@ -154,7 +154,7 @@ final Map<String, dynamic> countryData = {
     'name': 'Jamaica',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Kingston'],
   },
   // CENTRAL AMERICA ---------------------------------------------------------------------------------------------------------------------------------
   // belize
@@ -169,7 +169,7 @@ final Map<String, dynamic> countryData = {
     'name': 'Honduras',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Islas de la Bahía'],
   },
   // EUROPE ---------------------------------------------------------------------------------------------------------------------------------
   // greece
@@ -177,14 +177,14 @@ final Map<String, dynamic> countryData = {
     'name': 'Greece',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Attica', 'South Aegean'],
   },
   // italy
   'it': {
     'name': 'Italy',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Lazio', 'Toscana', 'Campania', 'Veneto', 'Puglia', 'Liguria'],
   },
   // albania
   'al': {
@@ -198,14 +198,14 @@ final Map<String, dynamic> countryData = {
     'name': 'Croatia',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Zagrebačka županija', 'Dubrovačko-neretvanska županija'],
   },
   // united kingdom
   'gb': {
     'name': 'United Kingdom',
     'visited': true,
     'dates': [],
-    'visitedStates': ['England'],
+    'visitedStates': ['Greater London', 'South West', 'South East'],
   },
   // france
   'fr': {
@@ -228,35 +228,35 @@ final Map<String, dynamic> countryData = {
     'name': 'Spain',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Catalonia', 'Balearic Islands'],
   },
   // portugal
   'pt': {
     'name': 'Portugal',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Lisbon', 'Porto'],
+    'visitedStates': ['Lisbon', 'Porto', 'Santarém', 'Leiria', 'Aveiro'],
   },
   // the netherlands
   'nl': {
     'name': 'The Netherlands',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Noord-Holland', 'Utrecht'],
+    'visitedStates': ['Noord-Holland', 'Utrecht', 'Zuid-Holland', 'Overijssel'],
   },
   // germany
   'de': {
     'name': 'Germany',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Cologne'],
+    'visitedStates': ['North Rhine-Westphalia'],
   },
   // belgium
   'be': {
     'name': 'Belgium',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Brussels-Capital Region'],
+    'visitedStates': ['Brussels Capital Region', 'Antwerp', 'West Flanders'],
   },
   // ASIA ---------------------------------------------------------------------------------------------------------------------------------
   // japan
@@ -264,14 +264,14 @@ final Map<String, dynamic> countryData = {
     'name': 'Japan',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Tokyo', 'Kyoto', 'Osaka', 'Hokkaido', 'Hiroshima', 'Nara', 'Nagano'],
+    'visitedStates': ['Tokyo', 'Kyoto', 'Osaka', 'Hokkaido', 'Hiroshima', 'Nara', 'Nagano', 'Fukushima'],
   },
   // south korea
   'kr': {
     'name': 'South Korea',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Seoul'],
+    'visitedStates': ['Seoul', 'Incheon', 'Gangwon'],
   },
   // MIDDLE EAST ---------------------------------------------------------------------------------------------------------------------------------
   // united arab emirates
@@ -279,13 +279,13 @@ final Map<String, dynamic> countryData = {
     'name': 'United Arab Emirates',
     'visited': true,
     'dates': [],
-    'visitedStates': ['Dubai', 'Abu Dhabi'],
+    'visitedStates': ['Dubayy', 'Abū Z̧aby', 'Ash Shāriqah', 'Al Fujayrah', 'Musandam, Oman'],
   },
   // oman
   'om': {
     'name': 'Oman',
     'visited': true,
     'dates': [],
-    'visitedStates': [],
+    'visitedStates': ['Musandam', 'Ash Shāriqah', 'Dubayy', 'Al Fujayrah'],
   },
 };

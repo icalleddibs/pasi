@@ -7,6 +7,7 @@ import 'screen_profile.dart';
 // https://pub.dev/packages/countries_world_map/example
 // https://examples.simplewidgets.dev/#/countries_world_map
 
+
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
 
