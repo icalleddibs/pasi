@@ -307,74 +307,86 @@ class _CountryPageState extends State<CountryPage> {
                                       color: Colors.black12, // thin grey line
                                     ),
 
-                                    /// RIGHT COLUMN — TEXT
                                     Expanded(
-                                      flex: 1, 
-                                      child: Container(
-                                        color: Colors.white,
-                                        padding: const EdgeInsets.all(8),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // stamp image at the top (to be resized), make sure to name properly by country code
-                                            Image.asset(
-                                              "assets/stamps/stamp_${widget.country}.png",
-                                              height: 120,
-                                              fit: BoxFit.contain,
+                                      flex: 1,
+                                      child: LayoutBuilder(
+                                        builder: (context, constraints) {
+                                          int extraLines = 0;
+
+                                          if (constraints.maxHeight > 550) {
+                                            extraLines = 7;
+                                          } else if (constraints.maxHeight > 500) {
+                                            extraLines = 6;
+                                          } else if (constraints.maxHeight > 480) {
+                                            extraLines = 5;
+                                          } else if (constraints.maxHeight > 430) {
+                                            extraLines = 4;
+                                          } else if (constraints.maxHeight > 380) {
+                                            extraLines = 3;
+                                          } else if (constraints.maxHeight > 330) {
+                                            extraLines = 2;
+                                          } else if (constraints.maxHeight > 280) {
+                                            extraLines = 1;
+                                          }
+
+                                          final extraContent = [
+                                            " ",
+                                            " ",
+                                            " ",
+                                            " ",
+                                            " ",
+                                            " ",
+                                            " ",
+                                          ];
+
+                                          return Container(
+                                            color: Colors.white,
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Image.asset(
+                                                  "assets/stamps/stamp_${widget.country}.png",
+                                                  height: 120,
+                                                  fit: BoxFit.contain,
+                                                ),
+
+                                                const SizedBox(height: 16),
+
+                                                Text(
+                                                  "${countryData[widget.country]?['name'] ?? 'Unknown Country'}",
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+
+                                                const Divider(height: 20),
+
+                                                Text(
+                                                  state,
+                                                  style: const TextStyle(fontSize: 18),
+                                                ),
+
+                                                // 🔽 Progressive rows
+                                                ...List.generate(extraLines, (index) {
+                                                  return Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      const Divider(height: 20),
+                                                      Text(
+                                                        extraContent[index],
+                                                        style: const TextStyle(fontSize: 16),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }),
+
+                                                const Spacer(), // keeps content pinned to top
+                                              ],
                                             ),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              "${countryData[widget.country]?['name'] ?? 'Unknown Country'}",
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                height: 1.4,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Divider(
-                                              thickness: 1,
-                                              height: 20,      // vertical space around it
-                                              color: Colors.black12,
-                                            ),
-                                            Text(
-                                              state,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                height: 1.4,
-                                              ),
-                                            ),
-                                            Divider(
-                                              thickness: 1,
-                                              height: 20,      // vertical space around it
-                                              color: Colors.black12,
-                                            ),
-                                            Text(
-                                              "More details TBA...",
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                height: 1.4,
-                                              ),
-                                            ),
-                                            Divider(
-                                              thickness: 1,
-                                              height: 20,      // vertical space around it
-                                              color: Colors.black12,
-                                            ),
-                                            Text(
-                                              "...",
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                height: 1.4,
-                                              ),
-                                            ),
-                                            Divider(
-                                              thickness: 1,
-                                              height: 20,      // vertical space around it
-                                              color: Colors.black12,
-                                            ),
-                                          ],
-                                        ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],

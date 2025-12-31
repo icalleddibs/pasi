@@ -6,7 +6,13 @@ final Map<String, dynamic> countryData = {
   'ca': {
     'name': 'Canada',
     'visited': true,
-    'dates': [],
+    'dates': [ //temp
+      DateTime(2018, 6, 12),
+      DateTime(2022, 8, 4),
+      DateTime(2023, 12, 25),
+      DateTime(2024, 5, 1),
+      DateTime(2024, 6, 15),
+    ],
     'visitedStates': ['Ontario', 'Quebec', 'Alberta', 'British Columbia', 'Saskatchewan', 'Manitoba', 'Yukon'],
   },
   // united states
@@ -205,7 +211,16 @@ final Map<String, dynamic> countryData = {
   'fr': {
     'name': 'France',
     'visited': true,
-    'dates': [],
+    'dates': [ //temp
+      DateTime(2019, 6, 12),
+      DateTime(2020, 7, 15),
+      DateTime(2021, 8, 20),
+      DateTime(2021, 9, 4),
+      DateTime(2022, 5, 10),
+      DateTime(2023, 4, 18),
+      DateTime(2024, 3, 22),
+      DateTime(2024, 6, 5),
+    ],
     'visitedStates': ['Île-de-France', 'Provence-Alpes-Côte d\'Azur'],
   },
   // spain
