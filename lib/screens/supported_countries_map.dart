@@ -9,7 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:pasi/data/country_data.dart';
 import 'package:pasi/designs/postcard_border.dart';
 
-// right side content: want to make this change based on which ribbon is clicked on
+// right side content: changes based on which ribbon is clicked on
+  // temp info for now
+  // changes colour on tab, don't really like that
+    // need better indication of which page we are on (see below) and a new colour for the overview tab
+  // i want to make the tab stick out, or overlay on the book maybe? so it looks more real
+
+// would like for clicking on the state/province to also trigger the side panel to change to that state/province
+
 // also will need to retrieve the info from the json
 // is there a way I can do markdown?
 
@@ -100,10 +107,11 @@ class CountryPage extends StatefulWidget {
 class _CountryPageState extends State<CountryPage> {
   late String state;
   late String instruction;
+  int selectedIndex = 0; // index for the page
 
   late List<Map<String, dynamic>> properties;
 
-  late Map<String, Color?> keyValuesPaires;
+  late Map<String, Color?> keyValuesPairs;
 
   @override
   void initState() {
@@ -115,10 +123,10 @@ class _CountryPageState extends State<CountryPage> {
       properties = getProperties(instruction, widget.country);
       properties.sort((a, b) => a['name'].compareTo(b['name']));
 
-      // Initialize colors based on 'checkedState'
-      keyValuesPaires = {};
+      // initialize colors based on 'checkedState'
+      keyValuesPairs = {};
       for (var element in properties) {
-        keyValuesPaires[element['id']] = element['color'];
+        keyValuesPairs[element['id']] = element['color'];
       }
 
     // MOVE THIS STATISTIC SOMEWHERE ELSE
@@ -130,72 +138,79 @@ class _CountryPageState extends State<CountryPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Widget for the list of properties
-    Widget propertyList() {
-  return ListView.builder(
-    padding: EdgeInsets.zero,
-    itemCount: properties.length + 1,
-    itemBuilder: (context, i) {
-      // home tab for each list, separate from list built by properties (provinces)
-      if (i == 0) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: ClipPath(
-          clipper: RibbonClipper(),
-          child: Container(
-            color: const Color.fromARGB(255, 236, 178, 92),
-            height: 35, // height of each ribbon
-            child: Padding(
-              // pushes content away from the left ribbon notch
-              padding: const EdgeInsets.only(left: 22, right: 2),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Overview",
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+    // widget for the list of properties with the parameters that need to get assigned and passed when called
+    Widget propertyList({
+      required int selectedIndex,
+      required Function(int) onSelect,
+    }) {
+      return ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: properties.length + 1,
+        itemBuilder: (context, i) {
+          final bool isSelected = i == selectedIndex;
+
+          // Overview ribbon
+          if (i == 0) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: GestureDetector(
+                onTap: () => onSelect(0),
+                child: ClipPath(
+                  clipper: RibbonClipper(),
+                  child: Container(
+                    height: 35,
+                    color: isSelected
+                        ? Colors.brown
+                        : const Color.fromARGB(255, 236, 178, 92), // this changes the colour when selected - change feature!
+                    padding: const EdgeInsets.only(left: 22, right: 2),
+                    alignment: Alignment.centerLeft,
+                    child: const Text(
+                      "Overview",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Property ribbons
+          final int j = i - 1;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: GestureDetector(
+              onTap: () => onSelect(i),
+              child: ClipPath(
+                clipper: RibbonClipper(),
+                child: Container(
+                  height: 35,
+                  color: isSelected
+                      ? Colors.brown
+                      : properties[j]['color'] ??
+                          const Color.fromARGB(255, 199, 199, 199), // this changes the colour when selected - change feature!
+                  padding: const EdgeInsets.only(left: 24, right: 6),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    properties[j]['id'],
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       );
     }
 
-      final int j = i - 1; // remaining index for properties list
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4), // space between ribbons
-        child: ClipPath(
-          clipper: RibbonClipper(), // these are the ribbons that each of the tiles is gonna go in
-          child: Container(
-            color: properties[j]['color'] ?? const Color.fromARGB(255, 199, 199, 199),
-            height: 35, // height of each ribbon
-            child: Padding(
-              // pushes content away from the left ribbon notch
-              padding: const EdgeInsets.only(left: 24, right: 6),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  properties[j]['id'],
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        )
-      );
-    },
-  );
-}
 
 
     return Scaffold(
@@ -298,7 +313,7 @@ class _CountryPageState extends State<CountryPage> {
                                         child: SimpleMap(
                                           defaultColor: Colors.grey.shade300,
                                           key: Key(properties.toString()),
-                                          colors: keyValuesPaires,
+                                          colors: keyValuesPairs,
                                           instructions: instruction,
                                         ),
                                       ),
@@ -408,10 +423,17 @@ class _CountryPageState extends State<CountryPage> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // LEFT: ribbon list (NO background)
+                                // LEFT: ribbon list
                                 SizedBox(
                                   width: 80,
-                                  child: propertyList(),
+                                  child: propertyList(
+                                    selectedIndex: selectedIndex,
+                                    onSelect: (i) {
+                                      setState(() {
+                                        selectedIndex = i;
+                                      });
+                                    },
+                                  ),
                                 ),
 
                                 // RIGHT: content card (rounded box)
@@ -425,8 +447,10 @@ class _CountryPageState extends State<CountryPage> {
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(16),
-                                      child: Text(
-                                        'Right-side content goes here',
+                                      child: Text( // THIS IS WHAT THE TEXT IS PROGRAMMED TO CHANGE TO BASED ON THE SELECTEDINDEX - change so that selectedIndex matches JSON?
+                                        selectedIndex == 0
+                                            ? 'Overview content goes here'
+                                            : 'Selected: ${properties[selectedIndex - 1]['name']}',
                                         style: Theme.of(context).textTheme.bodyLarge,
                                       ),
                                     ),
@@ -450,10 +474,17 @@ class _CountryPageState extends State<CountryPage> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // LEFT: ribbon list (constrained width)
+                            // LEFT: ribbon list
                             SizedBox(
                               width: 80,
-                              child: propertyList(),
+                              child: propertyList(
+                                selectedIndex: selectedIndex,
+                                onSelect: (i) {
+                                  setState(() {
+                                    selectedIndex = i;
+                                  });
+                                },
+                              ),
                             ),
 
                             // RIGHT: future content
@@ -461,7 +492,9 @@ class _CountryPageState extends State<CountryPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(16),
                                 child: Text(
-                                  'Right-side content goes here',
+                                  selectedIndex == 0
+                                      ? 'Overview content goes here'
+                                      : 'Selected: ${properties[selectedIndex - 1]['name']}',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ),
